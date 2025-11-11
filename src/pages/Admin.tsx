@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Pencil, Trash2, Plus, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import {
   Dialog,
@@ -50,7 +51,7 @@ const Admin = () => {
         .from("products")
         .select("*")
         .order("created_at", { ascending: false });
-      
+
       if (error) throw error;
       return data;
     },
@@ -120,7 +121,7 @@ const Admin = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const product = {
       name: formData.name,
       description: formData.description,
@@ -158,10 +159,17 @@ const Admin = () => {
     }
   };
 
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    navigate("/login");
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <main className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
@@ -172,7 +180,9 @@ const Admin = () => {
               Add, edit, or remove products from your store
             </p>
           </div>
-          
+        <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded absolute top-4 right-4">
+          Logout
+        </button>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button onClick={resetForm} className="bg-gradient-primary">
@@ -186,18 +196,16 @@ const Admin = () => {
                   {editingProduct ? "Edit Product" : "Add New Product"}
                 </DialogTitle>
               </DialogHeader>
-              
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <Label htmlFor="name">Product Name</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
+                  <Input id="name" value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="description">Description</Label>
                   <Textarea
@@ -207,7 +215,7 @@ const Admin = () => {
                     rows={3}
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="price">Price ($)</Label>
@@ -220,7 +228,7 @@ const Admin = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="category">Category</Label>
                     <Input
@@ -231,7 +239,7 @@ const Admin = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="stock">Stock Quantity</Label>
@@ -243,7 +251,7 @@ const Admin = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <Label htmlFor="rating">Rating (0-5)</Label>
                     <Input
@@ -258,7 +266,7 @@ const Admin = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="image">Image URL</Label>
                   <Input
@@ -269,10 +277,10 @@ const Admin = () => {
                     placeholder="https://example.com/image.jpg"
                   />
                 </div>
-                
+
                 <div className="flex space-x-2 pt-4">
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     className="flex-1 bg-gradient-primary"
                     disabled={addMutation.isPending || updateMutation.isPending}
                   >
@@ -342,8 +350,8 @@ const Admin = () => {
                     </div>
                     {product.image_url && (
                       <div className="flex justify-end">
-                        <img 
-                          src={product.image_url} 
+                        <img
+                          src={product.image_url}
                           alt={product.name}
                           className="w-32 h-32 object-cover rounded-lg shadow-card"
                         />
