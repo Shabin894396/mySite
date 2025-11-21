@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { Navigate } from "react-router-dom";
 
-export default function ProtectedRoute({ children }: any) {
+export default function UserProtectedRoute({ children }: any) {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -15,11 +15,7 @@ export default function ProtectedRoute({ children }: any) {
 
   if (loading) return null;
 
-  const adminEmail = "admin@example.com";
-
-  if (!user || user.email !== adminEmail) {
-    return <Navigate to="/admin/login" />;
-  }
+  if (!user) return <Navigate to="/login" />;
 
   return children;
 }

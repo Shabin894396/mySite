@@ -1,46 +1,26 @@
 import { useState } from "react";
-import { supabase } from "../integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import { supabase } from "@/lib/supabaseClient";
 
-export default function Login() {
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      setError(error.message);
-    } else {
-      navigate("/admin");
-    }
-  };
+    if (error) setError(error.message);
+    else window.location.href = "/admin";
+  }
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-900">
-      <form
-        onSubmit={handleLogin}
-        className="bg-gray-800 p-8 rounded-xl w-80 flex flex-col gap-4 shadow-lg"
-      >
-        <h2 className="text-white text-2xl font-bold mb-2">Admin Login</h2>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <input
-          type="email"
-          placeholder="Email"
-          className="p-2 rounded bg-gray-700 text-white"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="p-2 rounded bg-gray-700 text-white"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit" className="bg-blue-500 hover:bg-blue-600 p-2 rounded text-white">
-          Login
-        </button>
+    <div className="flex h-screen items-center justify-center bg-gray-900 text-white">
+      <form onSubmit={handleLogin} className="p-8 bg-gray-800 rounded-xl shadow-lg">
+        <h1 className="text-xl mb-4 font-bold text-center">Admin Login</h1>
+        <input className="p-2 mb-3 w-full text-black rounded" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <input className="p-2 mb-3 w-full text-black rounded" placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        {error && <p className="text-red-400 mb-2">{error}</p>}
+        <button className="w-full bg-blue-600 py-2 rounded hover:bg-blue-700">Login</button>
       </form>
     </div>
   );
