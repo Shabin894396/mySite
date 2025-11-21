@@ -63,7 +63,7 @@ const Index = () => {
             href="#products"
             className="inline-block bg-white text-primary font-semibold py-3 px-6 rounded-lg shadow hover:bg-gray-200 transition"
           >
-            NextBuy
+            Shop Now
           </a>
         </div>
       </section>
